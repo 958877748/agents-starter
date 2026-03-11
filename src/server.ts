@@ -1,4 +1,4 @@
-import { createWorkersAI } from "workers-ai-provider";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { routeAgentRequest, callable, type Schedule } from "agents";
 import { getSchedulePrompt, scheduleSchema } from "agents/schedule";
 import { AIChatAgent, type OnChatMessageOptions } from "@cloudflare/ai-chat";
@@ -45,10 +45,14 @@ export class ChatAgent extends AIChatAgent<Env> {
 
   async onChatMessage(_onFinish: unknown, options?: OnChatMessageOptions) {
     const mcpTools = this.mcp.getAITools();
-    const workersai = createWorkersAI({ binding: this.env.AI });
+    const zhipu = createOpenAICompatible({
+      name: "zhipu",
+      baseURL: "https://open.bigmodel.cn/api/paas/v4",
+      apiKey: this.env.ZHIPU_API_KEY,
+    });
 
     const result = streamText({
-      model: workersai("@cf/zai-org/glm-4.7-flash"),
+      model: zhipu("glm-4.7-flash"),
       system: `You are a helpful assistant. You can check the weather, get the user's timezone, run calculations, and schedule tasks.
 
 ${getSchedulePrompt({ date: new Date() })}

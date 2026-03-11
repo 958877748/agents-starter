@@ -10,4 +10,6 @@ declare namespace Cloudflare {
 		ChatAgent: DurableObjectNamespace<import("./src/server").ChatAgent>;
 	}
 }
-interface Env extends Cloudflare.Env {}
+interface Env extends Cloudflare.Env {
+  ZHIPU_API_KEY: string | undefined;
+}
